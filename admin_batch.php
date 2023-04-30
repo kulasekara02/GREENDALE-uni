@@ -89,46 +89,30 @@ img {vertical-align: middle;}
   <body style="background-color: grey; margin-top: -20px">
 	
 	   <?php
-	session_start();
-	include "DBconnection.php";
-	if(!isset($_SESSION['email']))
-	{
-		header("location:adminloginindex.php");
-	}
-	else
-	{
-		$email = $_SESSION['email'];
-		
-		$result = mysqli_query($conn,"SELECT * FROM admins WHERE admin_email='" . $email."'");
-		$row  = mysqli_fetch_array($result);
-		
-		if($row >0)
-		{
-		$name=$row['admin_name'];
-		$pic =$row['admin_picture'];
-		$password =$row['admin_password'];
-		$year =$row['admin_year'];
-		$birthday =$row['admin_birthday'];
-		$NIC =$row['admin_NIC'];	
-		$id = $_SESSION['id'];	
-		}
-		
-		
-		if($row >0)
-		{
-		
-		
-			
-		$mysqli = new mysqli('localhost','root','','greendale') or die(mysqli_error($mysqli));
-		$result  = $mysqli->query("SELECT * FROM student_batches ") or die ($mysqli->erorr);	
-	
-		}
-		
-		
-	}
+session_start();
+include "DBconnection.php";
+
+if(!isset($_SESSION['email'])) {
+    header("location:adminloginindex.php");
+} else {
+    $email = $_SESSION['email'];
+    $result = mysqli_query($conn,"SELECT * FROM admins WHERE admin_email='$email'");
+    $row  = mysqli_fetch_array($result);
+
+    $name = $row['admin_name'];
+    $pic = $row['admin_picture'];
+    $password = $row['admin_password'];
+    $year = $row['admin_year'];
+    $birthday = $row['admin_birthday'];
+    $NIC = $row['admin_NIC']; 
+    $id = $_SESSION['id'];
+
+    $mysqli = new mysqli('localhost','root','','greendale') or die(mysqli_error($mysqli));
+    $result = $mysqli->query("SELECT * FROM student_batches") or die ($mysqli->error);   
+}
+
 	  ?>
-	   
-	
+
 	  	  <div class="div_content_admin">
 		  
     <div class="header_admin">
@@ -273,7 +257,7 @@ img {vertical-align: middle;}
   </div>
 </div>			
     </div>
-			  
+
 			  
 	 
     <table class="table table-bordered  "  style=" color: black; font-size: 20px; border:10px ">

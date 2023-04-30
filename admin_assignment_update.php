@@ -8,16 +8,30 @@ if (isset($_POST['updatedata'])) {
 	$batch_id = $_POST['batch_id'];
 
 	// Upload files
-	$moduleAssignments = [];
-	for ($i = 1; $i <= 10; $i++) {
-		if (!empty($_FILES["moduleassignment_$i"]["name"])) {
-			$filename = basename($_FILES["moduleassignment_$i"]["name"]);
-			$destination = 'moduleassignmentsforStudents/' . $filename;
-			move_uploaded_file($_FILES["moduleassignment_$i"]["tmp_name"], $destination);
-			$moduleAssignments[] = $filename;
-		}
-	}
+// define constant for maximum number of files to process
+const MAX_FILES = 10;
 
+function uploadModuleAssignments($files) {
+  $moduleAssignments = [];
+
+  // loop through files
+  for ($i = 1; $i <= MAX_FILES; $i++) {
+	// check if file is set and not empty
+	if (isset($files["moduleassignment_$i"]) && !empty($files["moduleassignment_$i"]["name"])) {
+	  $filename = basename($files["moduleassignment_$i"]["name"]);
+	  $destination = 'moduleassignmentsforStudents/' . $filename;
+
+	  // move file to destination folder
+	  if (move_uploaded_file($files["moduleassignment_$i"]["tmp_name"], $destination)) {
+		$moduleAssignments[] = $filename;
+	  }
+	}
+  }
+
+  return $moduleAssignments;
+}
+
+// Usage: call uploadModuleAssignments($_FILES) to upload module assignments from form submission.
 	// Build query
 	$query = "UPDATE module_assignments SET assignmnt_id=?, batch_id=?, ";
 	for ($i = 1; $i <= count($moduleAssignments); $i++) {

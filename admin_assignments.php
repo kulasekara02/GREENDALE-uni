@@ -118,7 +118,7 @@ img {vertical-align: middle;}
 	}
 	  ?>
    
-	
+
 	  	  <div class="div_content_admin">
 		  
     <div class="header_admin">

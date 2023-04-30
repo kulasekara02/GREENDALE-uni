@@ -385,43 +385,40 @@ img {vertical-align: middle;}
 	  <?php 
  		while ($row= $result->fetch_assoc()):  ?>  
 	  
-    <tr>
-		
-     	 <td><?php echo $row['assignmnt_id']; ?></td>
-		 <td><?php echo $row['batch_id']; ?></td>
-		 <td ><?php echo $row['module_1_issued']; ?></td>
-		 <td ><?php echo $row['module_1_deadl']; ?></td>
-		 <td><?php echo $row['module_2_issued']; ?></td>
-		<td><?php echo $row['module_2_deadl']; ?></td>
-		 <td ><?php echo $row['module_3_issued']; ?></td>
-		 <td ><?php echo $row['module_3_deadl']; ?></td>
-		 <td ><?php echo $row['module_4_issued']; ?></td>
-		 <td ><?php echo $row['module_4_deadl']; ?></td>
-		 <td ><?php echo $row['module_5_issued']; ?></td>
-		 <td ><?php echo $row['module_5_deadl']; ?></td>
-		 <td ><?php echo $row['module_6_issued']; ?></td>
-		 <td ><?php echo $row['module_6_deadl']; ?></td>
-	   	 <td ><?php echo $row['module_7_issued']; ?></td>
-		<td ><?php echo $row['module_7_deadl']; ?></td>
-		 <td ><?php echo $row['module_8_issued']; ?></td>
-		 <td ><?php echo $row['module_8_deadl']; ?></td>
-		 <td ><?php echo $row['module_9_issued']; ?></td>
-		<td ><?php echo $row['module_9_deadl']; ?></td>
-		 <td ><?php echo $row['module_10_issued']; ?></td>
-		 <td ><?php echo $row['module_10_deadl']; ?></td>
-		 
-	
-		 
-		 <td><button type="button" class="btn btn-success btn-xs editbtn"><i class="fa fa-cog" aria-hidden="true"></i></button></td>
- 		 <td class="hidden"><a href="admin_manage_assignments_dates.php?delete= <?php echo $row['assignmnt_id']; ?> " class="btn btn-danger btn-xs"><i class="fa fa-trash"></a></td>
-		
-    </tr>
- 
+	<tr id="row_<?php echo $row['assignmnt_id']; ?>">
+		<td><?php echo $row['assignmnt_id']; ?></td>
+		<td><?php echo $row['batch_id']; ?></td>
+		<td><button type="button" class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#assignmentDetails_<?php echo $row['assignmnt_id']; ?>"><i class="fa fa-plus"></i></button></td>
+		<td><button type="button" class="btn btn-success btn-xs editbtn"><i class="fa fa-cog" aria-hidden="true"></i></button></td>
+		<td><button type="button" class="btn btn-danger btn-xs deletebtn" data-id="<?php echo $row['assignmnt_id']; ?>"><i class="fa fa-trash"></i></button></td>
+	</tr>
+	<tr id="assignmentDetails_<?php echo $row['assignmnt_id']; ?>" class="collapse">
+		<td colspan="4">
+			<table class="table-condensed">
+				<thead>
+					<tr>
+						<th>Module Issued</th>
+						<th>Module Deadline</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php for ($i = 1; $i <= 10; $i++) { ?>
+						<?php if (!empty($row["module_{$i}_issued"]) && !empty($row["module_{$i}_deadl"])) { ?>
+							<tr>
+								<td><?php echo $row["module_{$i}_issued"]; ?></td>
+								<td><?php echo $row["module_{$i}_deadl"]; ?></td>
+							</tr>
+						<?php } ?>
+					<?php } ?>
+				</tbody>
+			</table>
+		</td>
+	</tr>
    
 	  
   </tbody>
 
- 
+
 <?php endwhile; ?>
 </table>
 	<?php
@@ -455,55 +452,26 @@ img {vertical-align: middle;}
 
 
 <script>
-		$(document).ready(function() {
-			
-			$('.editbtn').on('click', function(){
-							 
-			$('#editmodal').modal('show');				 
-		
-				
-			$tr = $(this).closest('tr');
-				
-			var data = $tr.children("td").map(function(){
-				
-				return $(this).text();
-			}).get();	
-				
-			console.log(data);
-				
-				$('#update_id').val(data[0]);
-				$('#assignmnt_id').val(data[0]);
-				$('#batch_id').val(data[1]);
-				$('#module_1_issued').val(data[2]);
-				$('#module_1_deadl').val(data[3]);
-				$('#module_2_issued').val(data[4]);
-				$('#module_2_deadl').val(data[5]);
-				$('#module_3_issued').val(data[6]);
-				$('#module_3_deadl').val(data[7]);
-				$('#module_4_issued').val(data[8]);
-				$('#module_4_deadl').val(data[9]);
-				$('#module_5_issued').val(data[10]);
-				$('#module_5_deadl').val(data[11]); 
-				$('#module_6_issued').val(data[12]);
-				$('#module_6_deadl').val(data[13]);
-				$('#module_7_issued').val(data[14]);
-				$('#module_7_deadl').val(data[15]);
-				$('#module_8_issued').val(data[16]);
-				$('#module_8_deadl').val(data[17]);
-				$('#module_9_issued').val(data[18]);
-				$('#module_9_deadl').val(data[19]);
-				$('#module_10_issued').val(data[20]);
-				$('#module_10_deadl').val(data[21]); 
-				
-		});
-	
-	});
-	
+$(document).ready(function() {
+  $('.editbtn').on('click', function() {
+	$('#editmodal').modal('show');
+	var $tr = $(this).closest('tr');
+	var data = $tr.children("td").map(function() {
+	  return $(this).text();
+	}).get();
+	console.log(data);
+	for (var i = 1; i <= 10; i++) {
+	  $('#module_' + i + '_issued').val(data[2 * i]);
+	  $('#module_' + i + '_deadl').val(data[2 * i + 1]);
+	}
+	$('#update_id, #assignmnt_id, #batch_id').val(data[0]); 
+  });
+});
 	
 
  
 
-
+This version uses a for loop to iterate over the 10 sets of module fields and sets their values dynamically with string concatenation. It also chains together the assignment of update_id , assignmnt_id , and batch_id with jQuery's multiple selector syntax to make the code more compact.
 
 </script>
 
