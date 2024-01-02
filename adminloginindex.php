@@ -53,36 +53,46 @@ text-align: right;
 	
 	
 	
-	<?php
+<?php
 session_start();
-$message="";
+$message = "";
 
-if(isset($_POST['submit'])){ 
+if (isset($_POST['submit'])) {
+    if (count($_POST) > 0) {
+        include 'DBconnection.php';
+        
+        // Sanitize user inputs
+        $username = mysqli_real_escape_string($conn, $_POST["username"]);
+        $password = mysqli_real_escape_string($conn, $_POST["password"]);
 
-if(count($_POST)>0) {
- include 'DBconnection.php';
-	
- 
- 
-$result = mysqli_query($conn,"SELECT * FROM admins WHERE admin_email='" . $_POST["username"] . "' and admin_password = '". $_POST["password"]."'");
-$row  = mysqli_fetch_array($result);
+        // Use prepared statements to prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM admins WHERE admin_email=?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-if(is_array($row)) {
-$_SESSION["id"] = $row['admin_id'];
-$_SESSION["email"] = $row['admin_email'];	
-$_SESSION["name"] = $row['admin_name'];
-$_SESSION["pic"] = $row['admin_picture'];
-	
-} else {
-$message = "Invalid Admin User Name or Password!";
-}
-}
-if(isset($_SESSION["id"])) {
-header("Location:administratorindex.php");
-}
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
 
+            // Verify hashed password
+            if (password_verify($password, $row['admin_password'])) {
+                $_SESSION["id"] = $row['admin_id'];
+                $_SESSION["email"] = $row['admin_email'];
+                $_SESSION["name"] = $row['admin_name'];
+                $_SESSION["pic"] = $row['admin_picture'];
+
+                header("Location: administratorindex.php");
+                exit();
+            } else {
+                $message = "Invalid Admin Password!";
+            }
+        } else {
+            $message = "Invalid Admin User Name!";
+        }
+    }
 }
-	?>  
+?>
+
 	  
  
 	 
