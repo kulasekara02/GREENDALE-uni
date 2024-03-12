@@ -33,11 +33,13 @@ if (isset($_POST['updatedata'])) {
 
 	// Handle result
 	if ($query_run) {
-		echo "submitted";    
-		header('location:admin_assignments.php');
-	} else {
-		echo "form not submitted";
-	}
+    echo "submitted";
+    header('Location: admin_assignments.php');
+    exit;
+} else {
+    echo "form not submitted";
+}
+
 }
 	               
 
